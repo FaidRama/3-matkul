@@ -25,8 +25,8 @@ if (isset($_GET['logout'])) {
 function logToDB($tool, $input, $output) {
     global $conn;
     $uid = $_SESSION['user_id'];
-    $stmt = $conn->prepare("INSERT INTO history_penggunaan (tool_name, input_detail, result_detail) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $tool, $input, $output);
+    $stmt = $conn->prepare("INSERT INTO history_penggunaan (user_id, tool_name, input_detail, result_detail) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isss", $uid, $tool, $input, $output);
     $stmt->execute();
 }
 
@@ -98,9 +98,10 @@ if (isset($_GET['endpoint'])) {
         file_put_contents($savePath, $encryptedData);
 
         // 3. Database
+        $uid = $_SESSION['user_id'];
         $ivHex = bin2hex($iv);
-        $stmt = $conn->prepare("INSERT INTO file_storage (filename, file_type, file_path, iv_file) VALUES (?, 'png', ?, ?)");
-        $stmt->bind_param("sss", $fileName, $savePath, $ivHex);
+        $stmt = $conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, 'png', ?, ?)");
+        $stmt->bind_param("isss", $uid, $fileName, $savePath, $ivHex);
         $stmt->execute();
         $lastId = $stmt->insert_id;
 
@@ -116,8 +117,8 @@ if (isset($_GET['endpoint'])) {
         
         // Load Gambar ke RAM
         $src = null;
-        if (strtolower($ext) == 'jpg' || strtolower($ext) == 'jpeg') $src = imagecreatefromjpeg($f['tmp_name']);
-        elseif (strtolower($ext) == 'png') $src = imagecreatefrompng($f['tmp_name']);
+        if (strtolower($ext) == 'jpg' || strtolower($ext) == 'jpeg') $src = @imagecreatefromjpeg($f['tmp_name']);
+        elseif (strtolower($ext) == 'png') $src = @imagecreatefrompng($f['tmp_name']);
         
         if (!$src) sendJson(['error' => 'Format salah (harus jpg/png)'], 400);
 
@@ -142,9 +143,10 @@ if (isset($_GET['endpoint'])) {
         file_put_contents($savePath, $encryptedData);
 
         // DB
+        $uid = $_SESSION['user_id'];
         $ivHex = bin2hex($iv);
-        $stmt = $conn->prepare("INSERT INTO file_storage (filename, file_type, file_path, iv_file) VALUES (?, 'jpg', ?, ?)");
-        $stmt->bind_param("sss", $fileName, $savePath, $ivHex);
+        $stmt = $conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, 'jpg', ?, ?)");
+        $stmt->bind_param("isss", $uid, $fileName, $savePath, $ivHex);
         $stmt->execute();
         $lastId = $stmt->insert_id;
 
@@ -193,15 +195,16 @@ if (isset($_GET['endpoint'])) {
             $ivPdf = enkripsiDanSimpan($tempPdfPath, $finalPdfPath, $kunciRahasia, $metode);
 
             // DB
-            $stmt = $conn->prepare("INSERT INTO file_storage (filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?)");
+            $uid = $_SESSION['user_id'];
+            $stmt = $conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?, ?)");
             // Simpan DOCX Record
             // KODE BARU (PERBAIKAN)
             $t1 = 'docx'; 
             $fn1 = $cleanName . '.docx'; // Gunakan cleanName yang ada timestamp-nya
-            $stmt->bind_param("ssss", $fn1, $t1, $finalDocPath, $ivDoc); 
+            $stmt->bind_param("issss", $uid, $fn1, $t1, $finalDocPath, $ivDoc); 
             $stmt->execute();
             // Simpan PDF Record
-            $t2 = 'pdf'; $fn2 = $cleanName.'.pdf'; $stmt->bind_param("ssss", $fn2, $t2, $finalPdfPath, $ivPdf); $stmt->execute();
+            $t2 = 'pdf'; $fn2 = $cleanName.'.pdf'; $stmt->bind_param("issss", $uid, $fn2, $t2, $finalPdfPath, $ivPdf); $stmt->execute();
             $lastId = $stmt->insert_id;
 
             // Hapus Temp
@@ -315,7 +318,8 @@ if (isset($_GET['endpoint'])) {
                         <?php
                         // 1. Ambil data DOCX dan PDF dari database
                         // Kita ambil semua file docx/pdf, urutkan dari yang terbaru
-                        $qFiles = $conn->query("SELECT * FROM file_storage WHERE file_type IN ('docx', 'pdf') ORDER BY id DESC");
+                        $uid = $_SESSION['user_id'];
+                        $qFiles = $conn->query("SELECT * FROM file_storage WHERE user_id = '$uid' AND file_type IN ('docx', 'pdf') ORDER BY id DESC");
                         
                         $groups = [];
                         while($f = $qFiles->fetch_assoc()) {
@@ -381,7 +385,8 @@ if (isset($_GET['endpoint'])) {
                     <thead><tr><th>ID</th><th>Tool</th><th>Input</th><th>Result</th></tr></thead>
                     <tbody>
                         <?php
-                        $h = $conn->query("SELECT * FROM history_penggunaan ORDER BY id DESC LIMIT 5");
+                        $uid = $_SESSION['user_id'];
+                        $h = $conn->query("SELECT * FROM history_penggunaan WHERE user_id = '$uid' ORDER BY id DESC LIMIT 5");
                         while($r = $h->fetch_assoc()) echo "<tr><td>{$r['id']}</td><td>{$r['tool_name']}</td><td>{$r['input_detail']}</td><td>{$r['result_detail']}</td></tr>";
                         ?>
                     </tbody>
