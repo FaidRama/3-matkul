@@ -51,106 +51,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Cyber Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: "Poppins", sans-serif;
-            background: #0A0F1F;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            overflow: hidden;
-        }
-
-        /* Cyber gradient glow effect */
-        .glow {
-            position: absolute;
-            width: 450px;
-            height: 450px;
-            background: radial-gradient(circle, #0099ff55, transparent 70%);
-            border-radius: 50%;
-            filter: blur(90px);
-            animation: glow 6s infinite alternate;
-        }
-
-        @keyframes glow {
-            from { transform: translate(-50px, -60px); }
-            to { transform: translate(50px, 60px); }
-        }
-
-        .container {
-            width: 850px;
-            height: 520px;
-            background: rgba(255,255,255,0.07);
-            backdrop-filter: blur(12px);
-            border-radius: 20px;
-            display: flex;
-            overflow: hidden;
-            border: 1px solid #00E5FF55;
-            box-shadow: 0px 0px 25px #00E5FF33;
-        }
-
-        .form-container {
-            width: 50%;
-            padding: 50px;
-        }
-
-        .right-box {
-            width: 50%;
-            background: linear-gradient(135deg, #0039A6, #001E4D);
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            border-left: 1px solid #00E5FF55;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid #00E5FF55;
-            color: white;
-            outline: none;
-            margin-bottom: 18px;
-        }
-
-        input:focus {
-            border-color: #00E5FF;
-            box-shadow: 0px 0px 10px #00E5FF;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #0099FF;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            transition: .25s;
-        }
-
-        button:hover {
-            background: #00E5FF;
-            box-shadow: 0px 0px 12px #00E5FF;
-        }
-
-        a {
-            color: #00E5FF;
-            cursor: pointer;
-        }
-
-        .hidden { display: none; }
-
-        .msg { color: #FF5555; text-align: center; }
-
-    </style>
+    <link rel="stylesheet" href="login.css">
 
 <script>
 function toggleForm() {
@@ -161,6 +62,8 @@ function toggleForm() {
 </head>
 
 <body>
+
+<div class="overlay"></div>
 
 <div class="glow"></div>
 
@@ -190,8 +93,16 @@ function toggleForm() {
 </div>
 
 <div class="right-box">
-<h1>💻 Login System</h1>
-<p>Akses fitur hanya dengan login atau buat akun baru</p>
+    <video autoplay muted loop id="right-box-video">
+        <source src="rig_box.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="overlay"></div> 
+        
+        <div class="right-box-content">
+            <h1>Login System</h1>
+            <p>Akses fitur hanya dengan login atau buat akun baru</p>
+        </div>
 </div>
 </div>
 </body>

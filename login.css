@@ -1,0 +1,150 @@
+/* style.css */
+body {
+    font-family: "Poppins", sans-serif;
+    background: #0A0F1F;
+
+    background-image: url('back_cip.gif');
+    background-size: cover;
+    background-position: center;
+    background-image: linear-gradient(rgba(10, 15, 31, 0.3), rgba(10, 15, 31, 0.3)), url('back_cip.gif');
+
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    overflow: hidden;
+}
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Warna hitam (0,0,0) dengan opacity 0.7 */
+    background-color: rgba(0, 0, 0, 0.3); 
+    z-index: -1; /* Pastikan di belakang semua konten */
+}
+
+/* Cyber gradient glow effect */
+.glow {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, #0099ff55, transparent 70%);
+    border-radius: 50%;
+    filter: blur(90px);
+    animation: glow 6s infinite alternate;
+}
+
+@keyframes glow {
+    from { transform: translate(-50px, -60px); }
+    to { transform: translate(50px, 60px); }
+}
+
+.container {
+    width: 850px;
+    height: 520px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid #00E5FF55;
+    box-shadow: 0px 0px 25px #00E5FF33;
+    z-index: 1;
+}
+
+.form-container {
+    width: 50%;
+    padding: 50px;
+}
+
+.right-box {
+    width: 50%;
+    background: linear-gradient(135deg, #0039A6, #001E4D);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border-left: 1px solid #00E5FF55;
+    position: relative;
+    overflow: hidden;
+}
+#right-box-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Mendorong video menutupi area, lalu memposisikannya kembali ke tengah */
+    min-width: 100%; 
+    min-height: 100%;
+    transform: translate(-50%, -50%); 
+    
+    /* Memastikan video menutupi tanpa terdistorsi */
+    object-fit: cover; 
+    z-index: 0; /* Lapisan paling bawah */
+}
+/* Pastikan overlay menutupi seluruh kotak */
+.right-box .overlay { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* Contoh warna gelap semi-transparan */
+    z-index: 1; /* Di atas video (0) */
+}
+
+/* Konten harus berada di atas overlay */
+.right-box-content {
+    position: relative; /* Agar z-index bekerja dengan baik */
+    z-index: 2; /* Di atas overlay (1) */
+    /* ... styling konten lainnya seperti padding, text-align, color ... */
+    padding: 20px;
+    color: white;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid #00E5FF55;
+    color: white;
+    outline: none;
+    margin-bottom: 18px;
+}
+
+input:focus {
+    border-color: #00E5FF;
+    box-shadow: 0px 0px 10px #00E5FF;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #0099FF;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+button:hover {
+    background: #00E5FF;
+    box-shadow: 0px 0px 12px #00E5FF;
+}
+
+a {
+    color: #00E5FF;
+    cursor: pointer;
+}
+
+.hidden { display: none; }
+
+.msg { color: #FF5555; text-align: center; }
