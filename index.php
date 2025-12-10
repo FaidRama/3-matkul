@@ -125,6 +125,91 @@ if (isset($_GET['endpoint'])) {
         logToDB('DOCX', $f['name'], 'Converted');
         sendJson(['downloadUrl'=>'download.php?id='.$lastId, 'fileName'=>$cleanName.'.pdf']);
     }
+
+    // 5. MP4 to MP3 Converter
+        if ($ep == '/media/convert' && $method == 'POST') {
+        // ... (validasi file upload sama seperti sebelumnya) ...
+        if(!isset($_FILES['file'])) sendJson(['error'=>'File MP4 tidak ditemukan'], 400);
+        $f = $_FILES['file'];
+        $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+
+        if ($ext != 'mp4' && $ext != 'mkv') sendJson(['error'=>'Format harus MP4 atau MKV'], 400);
+
+        $base = 'uploads/';
+        $dirMedia = $base.'media/'; 
+        $dirTmp = $base.'temp/';
+        if(!is_dir($dirMedia)) mkdir($dirMedia,0777,true); 
+        if(!is_dir($dirTmp)) mkdir($dirTmp,0777,true);
+
+        $cleanName = time().'_'.preg_replace('/[^A-Za-z0-9]/', '_', pathinfo($f['name'], PATHINFO_FILENAME));
+        // Gunakan realpath untuk folder agar path absolut dan aman
+        $tmpVidPath = realpath($dirTmp) . DIRECTORY_SEPARATOR . $cleanName . '.' . $ext;
+        $rawAudioPath = realpath($dirTmp) . DIRECTORY_SEPARATOR . $cleanName . '_raw.mp3';
+        $finalEncryptedPath = realpath($dirMedia) . DIRECTORY_SEPARATOR . $cleanName . '.mp3';
+
+        if (!move_uploaded_file($f['tmp_name'], $tmpVidPath)) {
+             sendJson(['error'=>'Gagal mengupload file ke folder tempSS'], 500);
+        }
+        
+        // --- Perintah FFmpeg ---
+        // PATH FFmpeg: Pastikan path ini benar di komputer Anda!
+        // Jika ffmpeg sudah ada di environment variable path, cukup 'ffmpeg'
+        // Jika belum, gunakan full path seperti 'C:\\ffmpeg\\bin\\ffmpeg.exe'
+        $ffmpeg_binary = 'D:\\ffmpeg\\bin\\ffmpeg.exe'; // Atau sesuaikan path-nya
+        if (!file_exists($tmpVidPath)) {
+            sendJson(['error' => 'File input hilang sebelum diproses.'], 500);
+        }
+
+        // Command optimasi:
+        // -y : Overwrite output files without asking
+        // -vn : Disable video recording (hanya ambil audio)
+        // -acodec libmp3lame : Codec MP3 standar
+        // -q:a 2 : Variable Bit Rate (VBR) kualitas tinggi (sekitar 190kbps), lebih cepat dari CBR kadang-kadang
+        $ffmpeg_command = "\"$ffmpeg_binary\" -y -i \"$tmpVidPath\" -vn -acodec libmp3lame -q:a 2 \"$rawAudioPath\" 2>&1";
+        
+        // Jalankan perintah
+        $output = shell_exec($ffmpeg_command);
+
+        // Cek keberhasilan
+        if(!file_exists($rawAudioPath) || filesize($rawAudioPath) == 0) {
+            @unlink($tmpVidPath);
+            // Log error untuk debugging (opsional, bisa dihapus di production)
+            // file_put_contents('ffmpeg_debug.log', $output); 
+            sendJson([
+                'error' => 'Gagal konversi FFmpeg.',
+                'debug_command' => $ffmpeg_command, // Perintah yang dijalankan
+                'debug_output' => $output           // Apa balasan error dari FFmpeg
+            ], 500);
+        }
+
+        $iv = enkripsiDanSimpan($rawAudioPath, $finalEncryptedPath, $key, $algo);
+        if ($iv === false) {
+            @unlink($tmpVidPath); @unlink($rawAudioPath);
+            sendJson(['error'=>'Gagal mengenkripsi file audio.'], 500);
+        }
+        
+
+        // --- Simpan ke Database ---
+        $uid=$_SESSION['user_id'];
+        $stmt=$conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?, ?)");
+        
+        $t='mp3'; 
+        $n=$cleanName.'.mp3'; 
+        // Gunakan path relatif untuk disimpan di DB agar mudah di-link
+        $dbPath = 'uploads/media/' . $cleanName . '.mp3';
+        
+        $stmt->bind_param("issss", $uid, $n, $t, $dbPath, $iv); 
+        $stmt->execute();
+        $lastId=$stmt->insert_id;
+
+        // Bersihkan file sementara
+        @unlink($tmpVidPath);
+        @unlink($rawAudioPath);
+        
+        logToDB('MP4->MP3', $f['name'], 'Success');
+        sendJson(['downloadUrl'=>'download.php?id='.$lastId, 'fileName'=>$n]);
+    }
+
     exit;
 }
 
@@ -285,9 +370,13 @@ while($r=$qFile->fetch_assoc()){
                 <button onclick="switchTab('qr')" id="nav-qr" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm">
                     <span>🔗</span> QR Generator
                 </button>
+                <button onclick="switchTab('media')" id="nav-media" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm">
+                    <span>🎵</span> MP4 to MP3
+                </button>
                 <button onclick="switchTab('bmi')" id="nav-bmi" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm">
                     <span>⚖️</span> BMI Calculator
                 </button>
+                
             </nav>
 
             <div class="p-4 border-t border-white/10 bg-black/10">
@@ -407,6 +496,17 @@ while($r=$qFile->fetch_assoc()){
                         </div>
                     </div>
 
+                    <div id="view-media" class="view-section hidden">
+                        <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3"><span class="text-3xl">🎵</span> MP4 to MP3</h3>
+                            <form id="formMedia" class="space-y-6">
+                                <input type="file" id="fileMedia" accept="video/mp4, video/x-m4v, video/quicktime, video/x-matroska" class="glass-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-yellow-400 file:text-black hover:file:bg-yellow-300 cursor-pointer text-white dark:text-white text-gray-800">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all">CONVERT TO MP3</button>
+                            </form>
+                            <div id="resMedia" class="mt-6"></div>
+                        </div>
+                    </div>
+
                 </div>
             </main>
         </div>
@@ -442,7 +542,7 @@ while($r=$qFile->fetch_assoc()){
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('nav-'+id).classList.add('active');
 
-            const titles = {'dashboard':'DASHBOARD','docx':'DOCX CONVERTER','image':'IMAGE COMPRESSOR','qr':'QR GENERATOR','bmi':'BMI CALCULATOR'};
+            const titles = {'dashboard':'DASHBOARD','docx':'DOCX CONVERTER','image':'IMAGE COMPRESSOR','qr':'QR GENERATOR','bmi':'BMI CALCULATOR', 'media':'MP4 TO MP3'};
             pageTitle.innerText = titles[id];
             
             if(window.innerWidth < 1024) toggleSidebar();
@@ -487,6 +587,51 @@ while($r=$qFile->fetch_assoc()){
                 const d=await r.json(); msg(res, `BMI: ${d.bmi} (${d.category})`);
             } catch(e){ msg(res, "Error", true); }
         };
+
+        // --- Media Conversion JS Logic ---
+        document.getElementById('formMedia').onsubmit = async (e) => {
+            e.preventDefault(); 
+            const res = document.getElementById('resMedia');
+            const btn = document.querySelector('#formMedia button'); // Ambil tombol submit
+            const f = document.getElementById('fileMedia').files[0]; 
+
+            if(!f) return;
+            
+            // Validasi ukuran file di sisi klien (opsional, misal max 50MB)
+            if(f.size > 50 * 1024 * 1024) {
+                msg(res, "File terlalu besar! Maksimal 50MB.", true);
+                return;
+            }
+
+            const fd = new FormData(); 
+            fd.append('file', f); 
+
+            // Tampilan Loading
+            btn.disabled = true; // Matikan tombol biar gak diklik berkali-kali
+            btn.innerHTML = "⏳ Converting... Please Wait";
+            btn.classList.add("opacity-50", "cursor-not-allowed");
+            res.innerHTML = `
+                <div class="p-4 rounded-xl text-center bg-blue-500/20 text-blue-200 border border-blue-500/30 animate-pulse">
+                    <p class="font-bold">Sedang memproses file...</p>
+                    <p class="text-xs mt-1">File besar mungkin butuh waktu beberapa menit.</p>
+                </div>`;
+
+            try {
+                const r = await fetch(API+'/media/convert', { method:'POST', body:fd }); 
+                const d = await r.json();
+
+                if(d.error) throw d.error; 
+                msg(res, `✅ Berhasil! Audio siap. <a href="${d.downloadUrl}" class="underline font-bold text-green-400">Download MP3</a>`);
+            } catch(e) { 
+                msg(res, `Gagal: ${e}`, true); 
+            } finally {
+                // Kembalikan tombol ke keadaan semula
+                btn.disabled = false;
+                btn.innerHTML = "CONVERT TO MP3";
+                btn.classList.remove("opacity-50", "cursor-not-allowed");
+            }
+        };
+
     </script>
 </body>
 </html>
