@@ -105,7 +105,7 @@ if (isset($_GET['endpoint'])) {
         move_uploaded_file($f['tmp_name'], $tmpDoc);
         
         // Convert
-        $loPath = '"D:\LibreOffice\program\soffice.exe"'; 
+        $loPath = __DIR__ . '/external_bin/libreoffice/program/soffice.exe'; 
         shell_exec("$loPath --headless --convert-to pdf --outdir \"".realpath($dirTmp)."\" \"".realpath($tmpDoc)."\"");
         
         $tmpPdf = $dirTmp.$cleanName.'.pdf';
@@ -155,7 +155,7 @@ if (isset($_GET['endpoint'])) {
         // PATH FFmpeg: Pastikan path ini benar di komputer Anda!
         // Jika ffmpeg sudah ada di environment variable path, cukup 'ffmpeg'
         // Jika belum, gunakan full path seperti 'C:\\ffmpeg\\bin\\ffmpeg.exe'
-        $ffmpeg_binary = 'D:\\ffmpeg\\bin\\ffmpeg.exe'; // Atau sesuaikan path-nya
+        $ffmpeg_binary = __DIR__ . '/external_bin/ffmpeg/bin/ffmpeg.exe'; // Atau sesuaikan path-nya
         if (!file_exists($tmpVidPath)) {
             sendJson(['error' => 'File input hilang sebelum diproses.'], 500);
         }
