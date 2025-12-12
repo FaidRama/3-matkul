@@ -44,31 +44,12 @@ if (isset($_GET['endpoint'])) {
     if ($ep == '/calc/bmi' && $method == 'POST') {
         $h = $jsonInput['heightCm'] ?? 0; $w = $jsonInput['weightKg'] ?? 0;
         if (!$h || !$w) sendJson(['error'=>'Invalid input'], 400);
-    
+        
         $h_meter = $h / 100;
         $bmi = round($w / ($h_meter * $h_meter), 2);
-        
-        $cat = "";
-        $msg = "";
-        $color = "";
-
-        if ($bmi < 18.5) {
-            $cat = 'Underweight';
-            $msg = "Your weight is below normal. You need to increase your calorie and healthy protein intake. Consult a nutritionist for a safe weight gain program.";
-            $color = "text-yellow-400";
-        } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
-            $cat = 'Normal Weight';
-            $msg = "Congratulations! Your weight is ideal. Maintain a balanced diet and regular exercise to keep your long-term health.";
-            $color = "text-green-400";
-        } elseif ($bmi >= 25 && $bmi <= 29.9) {
-            $cat = 'Overweight';
-            $msg = "Your weight is slightly above normal. It is recommended to reduce sugar/saturated fat intake and increase light cardio activity.";
-            $color = "text-orange-400";
-        } else {
-            $cat = 'Obesity';
-            $msg = "Warning: You are in the obesity category. This condition increases the risk of health problems. It is highly recommended to consult a doctor immediately.";
-            $color = "text-red-500";
-        }
+        $cat = ($bmi<18.5)?'Underweight':(($bmi<25)?'Normal Weight':(($bmi<30)?'Overweight':'Obesity'));
+        $msg = "BMI calculation result.";
+        $color = "text-white";
 
         logToDB('BMI', "$h cm, $w kg", "BMI: $bmi ($cat)");
         sendJson(['bmi'=>$bmi, 'category'=>$cat, 'message'=>$msg, 'color'=>$color]);
@@ -199,10 +180,21 @@ if (isset($_GET['endpoint'])) {
     exit;
 }
 
+// ==========================================
+// 2. FETCH DATA
+// ==========================================
 $uid = $_SESSION['user_id'];
 $files = [];
-$qFile = $conn->query("SELECT * FROM file_storage WHERE user_id='$uid' AND file_type IN ('docx','pdf') ORDER BY id DESC");
-if ($qFile) { while($r=$qFile->fetch_assoc()){ $base = pathinfo($r['filename'], PATHINFO_FILENAME); $files[$base][$r['file_type']] = $r; } }
+
+// FIX: Menghapus filter 'AND file_type IN ...' agar semua file muncul
+$qFile = $conn->query("SELECT * FROM file_storage WHERE user_id='$uid' ORDER BY id DESC LIMIT 20");
+
+if ($qFile) { 
+    while($r=$qFile->fetch_assoc()){ 
+        $base = pathinfo($r['filename'], PATHINFO_FILENAME); 
+        $files[$base][$r['file_type']] = $r; 
+    } 
+}
 
 $viewFile = 'dashboard_view.php';
 if (file_exists($viewFile)) { require_once $viewFile; } else { die("View File Missing"); }
