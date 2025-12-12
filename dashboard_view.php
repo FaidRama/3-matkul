@@ -9,6 +9,9 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
     <title>Dashboard - SecureTools</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Load Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
     <script>
         tailwind.config = {
@@ -41,70 +44,78 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
             animation: gradientMove 15s ease infinite;
         }
 
+        /* --- PARTICLES CONTAINER --- */
+        #particles-js {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            z-index: -40; /* Above main-bg (-50) but below content */
+            pointer-events: none; /* Let clicks pass through */
+        }
+
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* --- LIQUID GLASS iOS 26 EFFECT --- */
+        /* --- LIQUID GLASS iOS 26 EFFECT (HYPER TRANSPARENT) --- */
         .glass-panel {
-            /* Base Transparency */
-            background: rgba(255, 255, 255, 0.05);
+            /* Base Transparency - Extremely low opacity */
+            background: rgba(255, 255, 255, 0.005);
             
-            /* The Blur & Saturation (Refraction Effect) */
-            backdrop-filter: blur(30px) saturate(140%);
-            -webkit-backdrop-filter: blur(30px) saturate(140%);
+            /* Minimal Blur to ensure particles are clearly visible */
+            backdrop-filter: blur(3px) saturate(110%);
+            -webkit-backdrop-filter: blur(3px) saturate(110%);
             
-            /* The Border (Light Reflection) */
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            border-left: 1px solid rgba(255, 255, 255, 0.4);
+            /* The Border (Subtle Light Reflection) */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 1px solid rgba(255, 255, 255, 0.2);
             
-            /* Deep Shadow & Inner Glow */
+            /* Very Soft Shadow to lift content slightly */
             box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.1), /* Soft Drop Shadow */
-                inset 0 0 20px rgba(255, 255, 255, 0.05); /* Inner Light */
+                0 20px 40px rgba(0, 0, 0, 0.05), 
+                inset 0 0 20px rgba(255, 255, 255, 0.02);
             
             border-radius: 24px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Dark Mode Specifics for Glass */
+        /* Dark Mode Specifics for Glass - ~10% Opacity */
         .dark .glass-panel {
-            background: rgba(0, 0, 0, 0.2);
-            border-color: rgba(255, 255, 255, 0.08);
-            border-top-color: rgba(255, 255, 255, 0.15);
+            background: rgba(0, 0, 0, 0.1);
+            border-color: rgba(255, 255, 255, 0.05);
+            border-top-color: rgba(255, 255, 255, 0.1);
             box-shadow: 
-                0 25px 50px -12px rgba(0, 0, 0, 0.5),
-                inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+                0 25px 50px -12px rgba(0, 0, 0, 0.3),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.02);
         }
 
-        /* Light Mode Specifics */
+        /* Light Mode Specifics - ~10% Opacity */
         html:not(.dark) .glass-panel {
-            background: rgba(255, 255, 255, 0.6);
-            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
             box-shadow: 
-                0 20px 40px rgba(31, 38, 135, 0.15),
-                inset 0 0 20px rgba(255, 255, 255, 0.5);
+                0 20px 40px rgba(31, 38, 135, 0.05),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
             color: #1e293b;
         }
 
-        /* Inputs */
+        /* Inputs - Also made more transparent */
         .glass-input { 
             width: 100%; padding: 0.85rem 1.2rem; border-radius: 16px; 
             transition: all 0.2s; outline: none;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(3px);
         }
         .dark .glass-input { 
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; 
+            background: rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.08); color: white; 
         }
-        .dark .glass-input:focus { border-color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.5); box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+        .dark .glass-input:focus { border-color: rgba(255,255,255,0.4); background: rgba(0,0,0,0.3); box-shadow: 0 0 15px rgba(255,255,255,0.05); }
         
         html:not(.dark) .glass-input { 
-            background: rgba(255,255,255,0.7); border: 1px solid rgba(0,0,0,0.05); color: #333; 
+            background: rgba(255,255,255,0.25); border: 1px solid rgba(0,0,0,0.05); color: #333; 
         }
-        html:not(.dark) .glass-input:focus { border-color: #6366f1; background: white; box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
+        html:not(.dark) .glass-input:focus { border-color: #6366f1; background: rgba(255,255,255,0.6); box-shadow: 0 0 15px rgba(99, 102, 241, 0.1); }
 
         /* Typography */
         body { font-family: 'Inter', sans-serif; }
@@ -113,11 +124,11 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
         /* Sidebar Styling */
         #sidebar { transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.3s ease-in-out; }
         .nav-item.active {
-            background: rgba(255, 255, 255, 0.15); font-weight: 700;
-            border-right: 3px solid white; /* Right indicator for modern look */
+            background: rgba(255, 255, 255, 0.08); font-weight: 700;
+            border-right: 3px solid white; 
             border-radius: 12px;
         }
-        html:not(.dark) .nav-item.active { background: rgba(0, 0, 0, 0.05); border-color: #333; }
+        html:not(.dark) .nav-item.active { background: rgba(0, 0, 0, 0.03); border-color: #333; }
         
         @media (min-width: 1024px) {
             #sidebar.collapsed { width: 5.5rem; }
@@ -130,13 +141,16 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 20px; }
     </style>
 </head>
 <body class="overflow-hidden dark:text-white text-slate-800 transition-colors duration-500">
 
     <!-- DYNAMIC BACKGROUND CONTAINER -->
     <div id="main-bg"></div>
+    
+    <!-- PARTICLES CONTAINER -->
+    <div id="particles-js"></div>
 
     <div class="flex h-screen relative z-10">
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden backdrop-blur-sm transition-opacity duration-300"></div>
@@ -513,6 +527,25 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                 document.getElementById('sidebar-overlay').classList.add('hidden');
             }
         }
+
+        // --- PARTICLES INIT ---
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#ffffff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.3, "random": false },
+                "size": { "value": 3, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#ffffff", "opacity": 0.2, "width": 1 },
+                "move": { "enable": true, "speed": 3, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": { "onhover": { "enable": true, "mode": "repulse" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+                "modes": { "repulse": { "distance": 100, "duration": 0.4 }, "push": { "particles_nb": 4 } }
+            },
+            "retina_detect": true
+        });
 
         // --- API HELPERS ---
         const API = "?endpoint=";
