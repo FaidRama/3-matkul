@@ -1,8 +1,8 @@
 <?php 
-if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan file ini."); } 
+if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead."); } 
 ?>
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,16 +16,13 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             theme: {
                 extend: {
                     fontFamily: {
-                        // Menggunakan Plus Jakarta Sans untuk heading
                         'heading': ['"Plus Jakarta Sans"', 'sans-serif'],
-                        // Menggunakan Inter untuk body (clean sans-serif)
                         'body': ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <!-- Load Plus Jakarta Sans & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -66,7 +63,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             100% { transform: translateY(0); }
         }
 
-        /* Set default font to Inter (clean sans-serif) */
         body { font-family: 'Inter', sans-serif; color: white; }
         
         .glass-panel {
@@ -107,42 +103,22 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
 
         @media (min-width: 1024px) {
             #sidebar.collapsed {
-                width: 5rem; /* w-20 */
+                width: 5rem;
             }
-            
             #sidebar.collapsed .sidebar-label {
-                opacity: 0;
-                width: 0;
-                margin-left: 0;
-                pointer-events: none;
+                opacity: 0; width: 0; margin-left: 0; pointer-events: none;
             }
-
             #sidebar.collapsed .nav-item {
-                justify-content: center;
-                padding-left: 0;
-                padding-right: 0;
+                justify-content: center; padding-left: 0; padding-right: 0;
             }
-
-            #sidebar.collapsed .logo-text {
-                display: none;
-            }
-
-            #sidebar.collapsed .user-info {
-                display: none;
-            }
-
-            #sidebar.collapsed .logo-container {
-                margin-right: 0;
-            }
+            #sidebar.collapsed .logo-text { display: none; }
+            #sidebar.collapsed .user-info { display: none; }
+            #sidebar.collapsed .logo-container { margin-right: 0; }
         }
 
         .sidebar-label {
             transition: opacity 0.2s ease-in-out, width 0.2s ease-in-out, margin 0.2s ease-in-out;
-            white-space: nowrap;
-            overflow: hidden;
-            width: auto;
-            opacity: 1;
-            margin-left: 0.75rem; 
+            white-space: nowrap; overflow: hidden; width: auto; opacity: 1; margin-left: 0.75rem; 
         }
     </style>
 </head>
@@ -151,19 +127,14 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
     <div class="animated-bg"></div>
 
     <div class="flex h-screen relative z-10">
-        <!-- Overlay for Mobile -->
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden backdrop-blur-sm"></div>
         
-        <!-- SIDEBAR -->
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-64 -translate-x-full lg:translate-x-0 glass-panel border-r border-white/10 flex flex-col h-full overflow-hidden shrink-0">
-            
-            <!-- Logo Section -->
             <div class="h-20 flex items-center px-6 border-b border-white/10 overflow-hidden whitespace-nowrap">
                 <div class="logo-container w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 to-pink-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shrink-0 mr-3 transition-all">S</div>
                 <span class="logo-text text-xl font-heading tracking-wide font-bold transition-opacity duration-300">SecureTools</span>
             </div>
 
-            <!-- Navigation -->
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div>
@@ -192,7 +163,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                 </button>
             </nav>
 
-            <!-- User Profile Section -->
             <div class="p-4 border-t border-white/10 bg-black/10 overflow-hidden">
                 <div class="flex items-center">
                     <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center font-bold shrink-0">
@@ -209,7 +179,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
         </aside>
 
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
-            <!-- Header -->
             <header class="h-20 flex items-center justify-between px-6 glass-panel border-b border-white/10 z-10 shrink-0">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
@@ -276,7 +245,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         </div>
                     </div>
 
-                    <!-- DOCX VIEW -->
                     <div id="view-docx" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
                             <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
@@ -295,7 +263,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         </div>
                     </div>
 
-                    <!-- IMAGE VIEW -->
                     <div id="view-image" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
                             <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
@@ -314,7 +281,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         </div>
                     </div>
 
-                    <!-- QR VIEW -->
                     <div id="view-qr" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
                             <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
@@ -333,31 +299,30 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         </div>
                     </div>
 
-                    <!-- BMI VIEW (UPDATED) -->
+                    <!-- BMI VIEW (UPDATED ENGLISH) -->
                     <div id="view-bmi" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
                             <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="scale" class="w-8 h-8 text-orange-400"></i> BMI Calculator
                             </h3>
 
-                            <!-- Info Rumus -->
                             <div class="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 text-sm">
                                 <h4 class="font-bold flex items-center gap-2 mb-2 text-yellow-300 font-heading">
-                                    <i data-lucide="info" class="w-4 h-4"></i> Info Rumus
+                                    <i data-lucide="info" class="w-4 h-4"></i> Formula Info
                                 </h4>
                                 <p class="opacity-80">
-                                    BMI = Berat Badan (kg) / (Tinggi Badan (m) x Tinggi Badan (m))
+                                    BMI = Weight (kg) / (Height (m) x Height (m))
                                 </p>
                             </div>
 
                             <form id="formBmi" class="space-y-6">
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="relative">
-                                        <input type="number" id="bH" placeholder="Tinggi (cm)" class="glass-input pl-10">
+                                        <input type="number" id="bH" placeholder="Height (cm)" class="glass-input pl-10">
                                         <i data-lucide="ruler" class="absolute left-3 top-3.5 w-4 h-4 text-gray-400"></i>
                                     </div>
                                     <div class="relative">
-                                        <input type="number" id="bW" placeholder="Berat (kg)" class="glass-input pl-10">
+                                        <input type="number" id="bW" placeholder="Weight (kg)" class="glass-input pl-10">
                                         <i data-lucide="weight" class="absolute left-3 top-3.5 w-4 h-4 text-gray-400"></i>
                                     </div>
                                 </div>
@@ -369,7 +334,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         </div>
                     </div>
 
-                    <!-- MEDIA VIEW -->
                     <div id="view-media" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
                             <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
@@ -396,7 +360,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
     <script>
         lucide.createIcons();
 
-        // THEME & SIDEBAR LOGIC
         const html = document.documentElement;
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             html.classList.add('dark');
@@ -407,19 +370,15 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
         }
 
-        // UPDATED TOGGLE SIDEBAR
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            const isMobile = window.innerWidth < 1024; // lg breakpoint
+            const isMobile = window.innerWidth < 1024; 
 
             if (isMobile) {
-                // Mobile Mode: Slide in/out
                 sidebar.classList.toggle('-translate-x-full');
                 overlay.classList.toggle('hidden');
             } else {
-                // Desktop Mode: Expand/Shrink
-                // We use a specific class 'collapsed' and let CSS handle the width and text hiding
                 sidebar.classList.toggle('collapsed');
             }
         }
@@ -432,7 +391,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             const titles = {'dashboard':'DASHBOARD','docx':'DOCX CONVERTER','image':'IMAGE COMPRESSOR','qr':'QR GENERATOR','bmi':'BMI CALCULATOR', 'media':'MP4 TO MP3'};
             document.getElementById('page-title').innerText = titles[id];
             
-            // On mobile, close sidebar after clicking
             if(window.innerWidth < 1024) {
                 document.getElementById('sidebar').classList.add('-translate-x-full');
                 document.getElementById('sidebar-overlay').classList.add('hidden');
@@ -477,11 +435,11 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             } catch(e){ msg(res, e, true); }
         };
 
-        // BMI (UPDATED JS)
+        // BMI
         document.getElementById('formBmi').onsubmit = async (e) => {
             e.preventDefault(); 
             const res = document.getElementById('resBmi'); 
-            res.innerHTML = '<div class="text-center animate-pulse">Menghitung...</div>';
+            res.innerHTML = '<div class="text-center animate-pulse">Calculating...</div>';
             
             try {
                 const r = await fetch(API+'/calc/bmi',{
@@ -494,7 +452,6 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                 const d = await r.json();
                 if(d.error) throw d.error;
 
-                // Tampilan Detail BMI
                 res.innerHTML = `
                 <div class="bg-white/10 border border-white/20 rounded-xl p-6 text-center shadow-lg">
                     <h4 class="text-4xl font-bold mb-2 font-heading">${d.bmi}</h4>
@@ -514,13 +471,13 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
         document.getElementById('formMedia').onsubmit = async (e) => {
             e.preventDefault(); const res=document.getElementById('resMedia'); const btn=document.querySelector('#formMedia button'); const f=document.getElementById('fileMedia').files[0]; 
             if(!f) return;
-            if(f.size > 50*1024*1024) { msg(res, "File terlalu besar (>50MB).", true); return; }
+            if(f.size > 50*1024*1024) { msg(res, "File too large (>50MB).", true); return; }
             const fd=new FormData(); fd.append('file', f); 
             btn.disabled=true; btn.innerHTML=`<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Converting...`; btn.classList.add("opacity-50");
             res.innerHTML=`<div class="p-4 rounded-xl text-center bg-blue-500/20 text-blue-200 border border-blue-500/30 animate-pulse font-bold">Processing...</div>`;
             try {
                 const r=await fetch(API+'/media/convert',{method:'POST',body:fd}); const d=await r.json();
-                if(d.error) throw d.error; msg(res, `✅ Berhasil! <a href="${d.downloadUrl}" class="underline font-bold text-green-400">Download MP3</a>`);
+                if(d.error) throw d.error; msg(res, `✅ Success! <a href="${d.downloadUrl}" class="underline font-bold text-green-400">Download MP3</a>`);
             } catch(e) { msg(res, e, true); }
             finally { btn.disabled=false; btn.innerHTML=`<i data-lucide="music-2" class="w-4 h-4"></i> CONVERT TO MP3`; btn.classList.remove("opacity-50"); lucide.createIcons(); }
         };

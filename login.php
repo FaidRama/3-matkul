@@ -21,9 +21,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ss", $u, $hashed);
 
         if($stmt->execute()) {
-            $message = "Registrasi berhasil! Silakan login.";
+            $message = "Registration successful! Please login.";
         } else {
-            $message = "Username sudah digunakan!";
+            $message = "Username already taken!";
         }
     }
 
@@ -41,18 +41,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit;
             }
         }
-        $message = "Username atau Password salah!";
+        $message = "Invalid Username or Password!";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>Cyber Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="login.css">
-
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
 <script>
 function toggleForm() {
     document.getElementById("loginForm").classList.toggle("hidden");
@@ -70,7 +72,7 @@ function toggleForm() {
 <div class="container">
 
 <div class="form-container">
-<h2> Selamat Datang</h2>
+<h2>Welcome</h2>
 <p class="msg"><?= $message ?></p>
 
 <form method="POST" id="loginForm">
@@ -78,17 +80,17 @@ function toggleForm() {
     <h3>Login</h3>
     <input type="text" name="username" placeholder="Username" required>
     <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Masuk</button>
-    <p style="text-align:center;">Belum punya akun? <a onclick="toggleForm()">Daftar</a></p>
+    <button type="submit">Sign In</button>
+    <p style="text-align:center;">Don't have an account? <a onclick="toggleForm()">Sign Up</a></p>
 </form>
 
 <form method="POST" id="registerForm" class="hidden">
     <input type="hidden" name="action" value="register">
-    <h3>Buat Akun</h3>
-    <input type="text" name="username" placeholder="Username Baru" required>
-    <input type="password" name="password" placeholder="Password Baru" required>
-    <button type="submit">Daftar Akun</button>
-    <p style="text-align:center;">Sudah punya akun? <a onclick="toggleForm()">Login</a></p>
+    <h3>Create Account</h3>
+    <input type="text" name="username" placeholder="New Username" required>
+    <input type="password" name="password" placeholder="New Password" required>
+    <button type="submit">Register</button>
+    <p style="text-align:center;">Already have an account? <a onclick="toggleForm()">Login</a></p>
 </form>
 </div>
 
@@ -100,8 +102,8 @@ function toggleForm() {
     <div class="overlay"></div> 
         
         <div class="right-box-content">
-            <h1>Secure Tools</h1>
-            <p>Akses fitur hanya dengan login atau buat akun baru</p>
+            <h1>Login System</h1>
+            <p>Access features by logging in or creating a new account</p>
         </div>
 </div>
 </div>

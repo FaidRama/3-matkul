@@ -12,7 +12,7 @@ define('INDEX_LOADED', true);
 $host = "localhost"; $user = "root"; $pass = ""; $db = "db_alat_online";
 
 $conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) { die("<h3>Koneksi Database Gagal:</h3> " . $conn->connect_error); }
+if ($conn->connect_error) { die("<h3>Database Connection Failed:</h3> " . $conn->connect_error); }
 
 if (!isset($_SESSION['user_id'])) { header("Location: login.php"); exit; }
 if (isset($_GET['logout'])) { session_destroy(); header("Location: login.php"); exit; }
@@ -40,11 +40,11 @@ if (isset($_GET['endpoint'])) {
     $key = "KelompokKamiPalingKeren2025!!"; $algo = "AES-256-CBC";
     $jsonInput = json_decode(file_get_contents('php://input'), true);
 
-    // 1. BMI 
+    // 1. BMI
     if ($ep == '/calc/bmi' && $method == 'POST') {
         $h = $jsonInput['heightCm'] ?? 0; $w = $jsonInput['weightKg'] ?? 0;
-        if (!$h || !$w) sendJson(['error'=>'Input tidak valid'], 400);
-        
+        if (!$h || !$w) sendJson(['error'=>'Invalid input'], 400);
+    
         $h_meter = $h / 100;
         $bmi = round($w / ($h_meter * $h_meter), 2);
         
@@ -53,20 +53,20 @@ if (isset($_GET['endpoint'])) {
         $color = "";
 
         if ($bmi < 18.5) {
-            $cat = 'Kurus (Underweight)';
-            $msg = "Berat badan Anda kurang. Anda perlu meningkatkan asupan kalori dan protein sehat. Konsultasikan dengan ahli gizi untuk program penambahan berat badan yang aman.";
+            $cat = 'Underweight';
+            $msg = "Your weight is below normal. You need to increase your calorie and healthy protein intake. Consult a nutritionist for a safe weight gain program.";
             $color = "text-yellow-400";
         } elseif ($bmi >= 18.5 && $bmi <= 24.9) {
-            $cat = 'Normal (Ideal)';
-            $msg = "Selamat! Berat badan Anda ideal. Terus pertahankan pola makan seimbang dan rutin berolahraga untuk menjaga kesehatan jangka panjang.";
+            $cat = 'Normal Weight';
+            $msg = "Congratulations! Your weight is ideal. Maintain a balanced diet and regular exercise to keep your long-term health.";
             $color = "text-green-400";
         } elseif ($bmi >= 25 && $bmi <= 29.9) {
-            $cat = 'Gemuk (Overweight)';
-            $msg = "Berat badan Anda sedikit berlebih. Disarankan untuk mulai mengurangi konsumsi gula/lemak jenuh dan meningkatkan aktivitas kardio ringan.";
+            $cat = 'Overweight';
+            $msg = "Your weight is slightly above normal. It is recommended to reduce sugar/saturated fat intake and increase light cardio activity.";
             $color = "text-orange-400";
         } else {
-            $cat = 'Obesitas (Obesity)';
-            $msg = "Perhatian: Anda dalam kategori obesitas. Kondisi ini meningkatkan risiko masalah kesehatan. Sangat disarankan berkonsultasi dengan dokter segera.";
+            $cat = 'Obesity';
+            $msg = "Warning: You are in the obesity category. This condition increases the risk of health problems. It is highly recommended to consult a doctor immediately.";
             $color = "text-red-500";
         }
 
@@ -77,9 +77,9 @@ if (isset($_GET['endpoint'])) {
     // 2. QR
     if ($ep == '/url/qr' && $method == 'POST') {
         $url = $jsonInput['url'] ?? ''; 
-        if(!$url) sendJson(['error'=>'URL Kosong'], 400);
+        if(!$url) sendJson(['error'=>'URL Empty'], 400);
         $qrRaw = file_get_contents("https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=".urlencode($url));
-        if(!$qrRaw) sendJson(['error'=>'Gagal fetch API QR'], 500);
+        if(!$qrRaw) sendJson(['error'=>'Failed to fetch QR API'], 500);
 
         $dir = 'uploads/qr/'; if(!is_dir($dir)) mkdir($dir, 0777, true);
         $fname = time().'_qr.png'; $path = $dir.$fname;
@@ -104,7 +104,7 @@ if (isset($_GET['endpoint'])) {
         if(preg_match('/jpg|jpeg/i', $ext)) $src = @imagecreatefromjpeg($f['tmp_name']);
         elseif(preg_match('/png/i', $ext)) $src = @imagecreatefrompng($f['tmp_name']);
         
-        if(!$src) sendJson(['error'=>'Format harus JPG/PNG'], 400);
+        if(!$src) sendJson(['error'=>'Format must be JPG/PNG'], 400);
         ob_start(); imagejpeg($src, null, 60); $compRaw = ob_get_clean(); imagedestroy($src);
         
         $dir = 'uploads/img/'; if(!is_dir($dir)) mkdir($dir, 0777, true);
@@ -139,7 +139,7 @@ if (isset($_GET['endpoint'])) {
         shell_exec("$loPath --headless --convert-to pdf --outdir \"".realpath($dirTmp)."\" \"".realpath($tmpDoc)."\"");
         
         $tmpPdf = $dirTmp.$cleanName.'.pdf';
-        if(!file_exists($tmpPdf)) sendJson(['error'=>'Gagal Convert LibreOffice'], 500);
+        if(!file_exists($tmpPdf)) sendJson(['error'=>'Failed to convert (LibreOffice)'], 500);
 
         // Enkripsi
         $pathDoc = $dirDoc.$cleanName.'.docx'; $ivDoc = enkripsiDanSimpan($tmpDoc, $pathDoc, $key, $algo);
@@ -158,11 +158,11 @@ if (isset($_GET['endpoint'])) {
 
     // 5. MP4 to MP3 Converter
     if ($ep == '/media/convert' && $method == 'POST') {
-        if(!isset($_FILES['file'])) sendJson(['error'=>'File MP4 tidak ditemukan'], 400);
+        if(!isset($_FILES['file'])) sendJson(['error'=>'MP4 file not found'], 400);
         $f = $_FILES['file'];
         $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
 
-        if ($ext != 'mp4' && $ext != 'mkv') sendJson(['error'=>'Format harus MP4 atau MKV'], 400);
+        if ($ext != 'mp4' && $ext != 'mkv') sendJson(['error'=>'Format must be MP4 or MKV'], 400);
 
         $base = 'uploads/'; $dirMedia = $base.'media/'; $dirTmp = $base.'temp/';
         if(!is_dir($dirMedia)) mkdir($dirMedia,0777,true); if(!is_dir($dirTmp)) mkdir($dirTmp,0777,true);
@@ -172,7 +172,7 @@ if (isset($_GET['endpoint'])) {
         $rawAudioPath = realpath($dirTmp) . DIRECTORY_SEPARATOR . $cleanName . '_raw.mp3';
         $finalEncryptedPath = realpath($dirMedia) . DIRECTORY_SEPARATOR . $cleanName . '.mp3';
 
-        if (!move_uploaded_file($f['tmp_name'], $tmpVidPath)) { sendJson(['error'=>'Gagal upload'], 500); }
+        if (!move_uploaded_file($f['tmp_name'], $tmpVidPath)) { sendJson(['error'=>'Upload failed'], 500); }
         
         $ffmpeg_binary = __DIR__ . '/external_bin/ffmpeg/bin/ffmpeg.exe';
         $ffmpeg_command = "\"$ffmpeg_binary\" -y -i \"$tmpVidPath\" -vn -acodec libmp3lame -q:a 2 \"$rawAudioPath\" 2>&1";
@@ -180,11 +180,11 @@ if (isset($_GET['endpoint'])) {
 
         if(!file_exists($rawAudioPath) || filesize($rawAudioPath) == 0) {
             @unlink($tmpVidPath);
-            sendJson(['error' => 'Gagal konversi FFmpeg.'], 500);
+            sendJson(['error' => 'FFmpeg conversion failed.'], 500);
         }
 
         $iv = enkripsiDanSimpan($rawAudioPath, $finalEncryptedPath, $key, $algo);
-        if ($iv === false) { @unlink($tmpVidPath); @unlink($rawAudioPath); sendJson(['error'=>'Gagal enkripsi audio.'], 500); }
+        if ($iv === false) { @unlink($tmpVidPath); @unlink($rawAudioPath); sendJson(['error'=>'Audio encryption failed.'], 500); }
 
         $uid=$_SESSION['user_id'];
         $stmt=$conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?, ?)");
@@ -205,5 +205,5 @@ $qFile = $conn->query("SELECT * FROM file_storage WHERE user_id='$uid' AND file_
 if ($qFile) { while($r=$qFile->fetch_assoc()){ $base = pathinfo($r['filename'], PATHINFO_FILENAME); $files[$base][$r['file_type']] = $r; } }
 
 $viewFile = 'dashboard_view.php';
-if (file_exists($viewFile)) { require_once $viewFile; } else { die("File View Hilang"); }
+if (file_exists($viewFile)) { require_once $viewFile; } else { die("View File Missing"); }
 ?>
