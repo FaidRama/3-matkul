@@ -100,7 +100,7 @@ function toggleForm() {
     <div class="overlay"></div> 
         
         <div class="right-box-content">
-            <h1>Login System</h1>
+            <h1>Secure Tools</h1>
             <p>Akses fitur hanya dengan login atau buat akun baru</p>
         </div>
 </div>

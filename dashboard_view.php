@@ -16,15 +16,19 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             theme: {
                 extend: {
                     fontFamily: {
-                        'economica': ['Economica', 'sans-serif'],
-                        'inter': ['Inter', 'sans-serif'],
+                        // Menggunakan Plus Jakarta Sans untuk heading
+                        'heading': ['"Plus Jakarta Sans"', 'sans-serif'],
+                        // Menggunakan Inter untuk body (clean sans-serif)
+                        'body': ['Inter', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css?family=Economica:400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <!-- Load Plus Jakarta Sans & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <style>
         .animated-bg {
@@ -62,7 +66,9 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             100% { transform: translateY(0); }
         }
 
+        /* Set default font to Inter (clean sans-serif) */
         body { font-family: 'Inter', sans-serif; color: white; }
+        
         .glass-panel {
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             transition: all 0.3s ease; border: 1px solid rgba(255, 255, 255, 0.2);
@@ -97,10 +103,8 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
         /* --- SIDEBAR ANIMATION STYLES --- */
         #sidebar {
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s ease-in-out;
-            /* Default width handled by Tailwind classes in HTML */
         }
 
-        /* Styles specifically for collapsed state on desktop */
         @media (min-width: 1024px) {
             #sidebar.collapsed {
                 width: 5rem; /* w-20 */
@@ -132,14 +136,13 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
             }
         }
 
-        /* Common transition for labels */
         .sidebar-label {
             transition: opacity 0.2s ease-in-out, width 0.2s ease-in-out, margin 0.2s ease-in-out;
             white-space: nowrap;
             overflow: hidden;
             width: auto;
             opacity: 1;
-            margin-left: 0.75rem; /* Equivalent to gap-3 */
+            margin-left: 0.75rem; 
         }
     </style>
 </head>
@@ -152,42 +155,40 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden backdrop-blur-sm"></div>
         
         <!-- SIDEBAR -->
-        <!-- Note: removed 'gap-3' from nav-item parents and moved spacing to .sidebar-label to handle collapse smoothly -->
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-64 -translate-x-full lg:translate-x-0 glass-panel border-r border-white/10 flex flex-col h-full overflow-hidden shrink-0">
             
             <!-- Logo Section -->
             <div class="h-20 flex items-center px-6 border-b border-white/10 overflow-hidden whitespace-nowrap">
                 <div class="logo-container w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-300 to-pink-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg shrink-0 mr-3 transition-all">S</div>
-                <span class="logo-text text-2xl font-['Economica'] tracking-wider font-bold transition-opacity duration-300">SecureTools</span>
+                <span class="logo-text text-xl font-heading tracking-wide font-bold transition-opacity duration-300">SecureTools</span>
             </div>
 
             <!-- Navigation -->
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto overflow-x-hidden">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-item active w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">Dashboard</span>
-                    <!-- Tooltip for collapsed mode -->
+                    <span class="sidebar-label font-medium">Dashboard</span>
                     <div class="absolute left-16 bg-black px-2 py-1 rounded text-xs hidden group-hover:block lg:group-hover:hidden whitespace-nowrap z-50">Dashboard</div>
                 </button>
                 <button onclick="switchTab('docx')" id="nav-docx" class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="file-text" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">DOCX to PDF</span>
+                    <span class="sidebar-label font-medium">DOCX to PDF</span>
                 </button>
                 <button onclick="switchTab('image')" id="nav-image" class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="image" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">Image Compress</span>
+                    <span class="sidebar-label font-medium">Image Compress</span>
                 </button>
                 <button onclick="switchTab('qr')" id="nav-qr" class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">QR Generator</span>
+                    <span class="sidebar-label font-medium">QR Generator</span>
                 </button>
                 <button onclick="switchTab('media')" id="nav-media" class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="music" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">MP4 to MP3</span>
+                    <span class="sidebar-label font-medium">MP4 to MP3</span>
                 </button>
                 <button onclick="switchTab('bmi')" id="nav-bmi" class="nav-item w-full flex items-center px-4 py-3 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="scale" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label">BMI Calculator</span>
+                    <span class="sidebar-label font-medium">BMI Calculator</span>
                 </button>
             </nav>
 
@@ -198,7 +199,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
                     </div>
                     <div class="user-info flex-1 min-w-0 ml-3 transition-opacity duration-300">
-                        <p class="text-sm font-bold truncate"><?= htmlspecialchars($_SESSION['username']) ?></p>
+                        <p class="text-sm font-bold font-heading truncate"><?= htmlspecialchars($_SESSION['username']) ?></p>
                         <div class="flex items-center gap-1 text-xs opacity-70">
                             <div class="w-2 h-2 rounded-full bg-green-400"></div> Online
                         </div>
@@ -210,13 +211,11 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
         <div class="flex-1 flex flex-col h-screen overflow-hidden">
             <!-- Header -->
             <header class="h-20 flex items-center justify-between px-6 glass-panel border-b border-white/10 z-10 shrink-0">
-                
-                <!-- HAMBURGER BUTTON (Visible on both Mobile & Desktop now) -->
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-white/10 transition-colors">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
-                    <h2 id="page-title" class="text-xl font-['Economica'] font-bold tracking-wide text-white drop-shadow-md hidden md:block">DASHBOARD</h2>
+                    <h2 id="page-title" class="text-xl font-heading font-bold tracking-wide text-white drop-shadow-md hidden md:block">DASHBOARD</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
@@ -224,7 +223,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                         <i id="icon-sun" data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-300"></i>
                         <i id="icon-moon" data-lucide="moon" class="w-5 h-5 block dark:hidden text-indigo-600"></i>
                     </button>
-                    <a href="?logout=true" class="bg-red-500 hover:bg-red-600 text-white border border-red-400 px-5 py-2 rounded-full text-xs font-bold transition-all shadow-lg hover:shadow-red-500/50 flex items-center gap-2">
+                    <a href="?logout=true" class="bg-red-500 hover:bg-red-600 text-white border border-red-400 px-5 py-2 rounded-full text-xs font-bold transition-all shadow-lg hover:shadow-red-500/50 flex items-center gap-2 font-heading">
                         <i data-lucide="log-out" class="w-3 h-3"></i> <span class="hidden sm:inline">LOGOUT</span>
                     </a>
                 </div>
@@ -235,21 +234,21 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
 
                     <div id="view-dashboard" class="view-section">
                         <div class="glass-panel rounded-2xl p-8 mb-6 text-center">
-                            <h3 class="text-3xl font-['Economica'] font-bold mb-2">Welcome, <?= htmlspecialchars($_SESSION['username']) ?>!</h3>
+                            <h3 class="text-3xl font-heading font-bold mb-2">Welcome, <?= htmlspecialchars($_SESSION['username']) ?>!</h3>
                             <p class="opacity-80">Your encrypted workspace is ready.</p>
                         </div>
                         <div class="glass-panel rounded-2xl overflow-hidden">
                             <div class="px-6 py-4 border-b border-white/10 flex justify-between items-center bg-black/20">
-                                <h4 class="font-bold font-['Economica'] text-xl flex items-center gap-2">
+                                <h4 class="font-bold font-heading text-xl flex items-center gap-2">
                                     <i data-lucide="clock" class="w-5 h-5"></i> Recent Files
                                 </h4>
-                                <button onclick="location.reload()" class="text-xs px-3 py-1 rounded border border-white/30 hover:bg-white/20 flex items-center gap-1">
+                                <button onclick="location.reload()" class="text-xs px-3 py-1 rounded border border-white/30 hover:bg-white/20 flex items-center gap-1 font-medium">
                                     <i data-lucide="refresh-cw" class="w-3 h-3"></i> Refresh
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm text-left">
-                                    <thead class="text-xs uppercase bg-black/10">
+                                    <thead class="text-xs uppercase bg-black/10 font-heading">
                                         <tr><th class="px-6 py-3">Time</th><th class="px-6 py-3">Original</th><th class="px-6 py-3">Result</th></tr>
                                     </thead>
                                     <tbody class="divide-y divide-white/10">
@@ -267,7 +266,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                                 <i data-lucide="file" class="w-4 h-4 opacity-50"></i> <?= $d ? htmlspecialchars($d['filename']) : '-' ?>
                                             </td>
                                             <td class="px-6 py-4">
-                                                <?php if($p): ?><a href="download.php?id=<?= $p['id'] ?>" class="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1 w-fit"><i data-lucide="download" class="w-3 h-3"></i> PDF</a><?php else: echo "Pending"; endif; ?>
+                                                <?php if($p): ?><a href="download.php?id=<?= $p['id'] ?>" class="text-xs bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center gap-1 w-fit font-bold"><i data-lucide="download" class="w-3 h-3"></i> PDF</a><?php else: echo "Pending"; endif; ?>
                                             </td>
                                         </tr>
                                         <?php endforeach; endif; ?>
@@ -280,7 +279,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                     <!-- DOCX VIEW -->
                     <div id="view-docx" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
-                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="file-text" class="w-8 h-8 text-blue-400"></i> DOCX to PDF
                             </h3>
                             <form id="formDoc" class="space-y-6">
@@ -288,7 +287,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                     <input type="file" id="fileDoc" accept=".docx" class="glass-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-yellow-400 file:text-black hover:file:bg-yellow-300 cursor-pointer text-white dark:text-white text-gray-800 pl-12">
                                     <i data-lucide="upload" class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 font-heading">
                                     <i data-lucide="zap" class="w-4 h-4"></i> CONVERT NOW
                                 </button>
                             </form>
@@ -299,7 +298,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                     <!-- IMAGE VIEW -->
                     <div id="view-image" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
-                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="image" class="w-8 h-8 text-pink-400"></i> Image Compress
                             </h3>
                             <form id="formImg" class="space-y-6">
@@ -307,7 +306,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                     <input type="file" id="fileImg" accept="image/*" class="glass-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-400 cursor-pointer pl-12">
                                     <i data-lucide="upload" class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 font-heading">
                                     <i data-lucide="minimize-2" class="w-4 h-4"></i> COMPRESS NOW
                                 </button>
                             </form>
@@ -318,7 +317,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                     <!-- QR VIEW -->
                     <div id="view-qr" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
-                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="qr-code" class="w-8 h-8 text-teal-400"></i> QR Generator
                             </h3>
                             <form id="formQr" class="space-y-6">
@@ -326,7 +325,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                     <input type="url" id="inpUrl" placeholder="https://..." class="glass-input pl-12">
                                     <i data-lucide="link" class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-400 hover:to-teal-400 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-400 hover:to-teal-400 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 font-heading">
                                     <i data-lucide="settings" class="w-4 h-4"></i> GENERATE QR
                                 </button>
                             </form>
@@ -337,13 +336,13 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                     <!-- BMI VIEW (UPDATED) -->
                     <div id="view-bmi" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
-                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="scale" class="w-8 h-8 text-orange-400"></i> BMI Calculator
                             </h3>
 
                             <!-- Info Rumus -->
                             <div class="mb-6 p-4 rounded-xl bg-white/5 border border-white/10 text-sm">
-                                <h4 class="font-bold flex items-center gap-2 mb-2 text-yellow-300">
+                                <h4 class="font-bold flex items-center gap-2 mb-2 text-yellow-300 font-heading">
                                     <i data-lucide="info" class="w-4 h-4"></i> Info Rumus
                                 </h4>
                                 <p class="opacity-80">
@@ -362,7 +361,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                         <i data-lucide="weight" class="absolute left-3 top-3.5 w-4 h-4 text-gray-400"></i>
                                     </div>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-400 hover:to-red-400 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 font-heading">
                                     <i data-lucide="calculator" class="w-4 h-4"></i> CALCULATE
                                 </button>
                             </form>
@@ -373,7 +372,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                     <!-- MEDIA VIEW -->
                     <div id="view-media" class="view-section hidden">
                         <div class="glass-panel rounded-3xl p-8 max-w-xl mx-auto">
-                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3">
+                            <h3 class="text-2xl font-bold mb-6 flex items-center gap-3 font-heading">
                                 <i data-lucide="music" class="w-8 h-8 text-purple-400"></i> MP4 to MP3
                             </h3>
                             <form id="formMedia" class="space-y-6">
@@ -381,7 +380,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                                     <input type="file" id="fileMedia" accept="video/mp4, video/x-m4v, video/quicktime, video/x-matroska" class="glass-input file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-yellow-400 file:text-black hover:file:bg-yellow-300 cursor-pointer text-white dark:text-white text-gray-800 pl-12">
                                     <i data-lucide="film" class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
                                 </div>
-                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2">
+                                <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold shadow-lg transform hover:-translate-y-1 transition-all flex justify-center items-center gap-2 font-heading">
                                     <i data-lucide="music-2" class="w-4 h-4"></i> CONVERT TO MP3
                                 </button>
                             </form>
@@ -498,7 +497,7 @@ if(!defined('INDEX_LOADED')) { die("Akses langsung ditolak! Buka index.php bukan
                 // Tampilan Detail BMI
                 res.innerHTML = `
                 <div class="bg-white/10 border border-white/20 rounded-xl p-6 text-center shadow-lg">
-                    <h4 class="text-4xl font-bold mb-2 font-['Economica']">${d.bmi}</h4>
+                    <h4 class="text-4xl font-bold mb-2 font-heading">${d.bmi}</h4>
                     <p class="font-bold text-lg ${d.color} mb-4">${d.category}</p>
                     <div class="bg-black/20 rounded-lg p-3 text-sm opacity-90 border border-white/10">
                         <i data-lucide="lightbulb" class="w-4 h-4 inline-block mb-1 text-yellow-300"></i>
