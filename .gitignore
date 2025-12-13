@@ -1,3 +1,5 @@
 uploads/*
 !uploads/.gitkeep
 external_bin/
+rig_box.mp4
+logo.png
