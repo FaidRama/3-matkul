@@ -51,6 +51,7 @@
                     exit;
                 }
             }
+            sleep(2); //cegah bruteforce
             $message = "Invalid Username or Password!";
         }
     }
