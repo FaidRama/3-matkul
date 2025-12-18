@@ -2,7 +2,7 @@
 if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead."); } 
 ?>
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en" class="dark"> <!-- Permanently Dark -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,7 +20,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
     <!-- Tailwind Config -->
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: 'class', // We keep this but will always force 'dark' class
             theme: {
                 extend: {
                     fontFamily: {
@@ -43,7 +43,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
     <!-- Custom Styles -->
     <link rel="stylesheet" href="dashboard.css">
 </head>
-<body class="overflow-hidden dark:text-white text-slate-800 transition-colors duration-500">
+<body class="overflow-hidden text-white bg-[#0A0F1F] transition-colors duration-500">
 
     <!-- DYNAMIC BACKGROUND CONTAINER -->
     <div id="main-bg"></div>
@@ -56,14 +56,11 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
         
         <!-- SIDEBAR -->
         <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-30 w-72 -translate-x-full lg:translate-x-0 glass-panel border-r-0 m-4 mb-4 mt-4 mr-0 flex flex-col overflow-hidden shrink-0 shadow-2xl">
-            <!-- UPDATED HEADER: Logo Besar + Nama Website + Clickable -->
+            <!-- UPDATED HEADER -->
             <div class="h-24 flex items-center px-6 border-b border-white/10 overflow-hidden whitespace-nowrap shrink-0">
                 <a href="javascript:void(0)" onclick="location.reload()" class="flex items-center gap-3 transition-opacity duration-300 hover:opacity-80 group w-full">
-                    <!-- Logo Image (Increased size to h-12) -->
                     <img src="logo.png" alt="Logo" class="h-12 w-auto object-contain shrink-0 transition-transform group-hover:scale-105">
-                    
-                    <!-- Website Name -->
-                    <span class="logo-text text-lg font-heading font-bold tracking-wide dark:text-white text-slate-800 truncate">utility 𝕏 press</span>
+                    <span class="logo-text text-lg font-heading font-bold tracking-wide text-white truncate">utility𝕏press</span>
                 </a>
             </div>
 
@@ -75,7 +72,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                 </button>
 
                 <!-- CONVERSION TOOLS -->
-                <div class="px-4 pt-4 pb-2 text-xs uppercase opacity-50 font-bold dark:text-white text-slate-800 category-header">Conversion Tools</div>
+                <div class="px-4 pt-4 pb-2 text-xs uppercase opacity-50 font-bold text-white category-header">Conversion Tools</div>
                 
                 <button onclick="switchTab('docx')" id="nav-docx" class="nav-item w-full flex items-center px-4 py-3.5 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="file-text" class="w-5 h-5"></i></div>
@@ -99,7 +96,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                 </button>
 
                 <!-- UTILITIES -->
-                <div class="px-4 pt-4 pb-2 text-xs uppercase opacity-50 font-bold dark:text-white text-slate-800 category-header">Utilities</div>
+                <div class="px-4 pt-4 pb-2 text-xs uppercase opacity-50 font-bold text-white category-header">Utilities</div>
 
                 <button onclick="switchTab('qr')" id="nav-qr" class="nav-item w-full flex items-center px-4 py-3.5 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="qr-code" class="w-5 h-5"></i></div>
@@ -117,7 +114,6 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                     <div class="shrink-0"><i data-lucide="activity" class="w-5 h-5"></i></div>
                     <span class="sidebar-label font-medium">Speed Test</span>
                 </button>
-                <!-- NEW: WORLD CLOCK BUTTON -->
                 <button onclick="switchTab('worldclock')" id="nav-worldclock" class="nav-item w-full flex items-center px-4 py-3.5 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="globe" class="w-5 h-5"></i></div>
                     <span class="sidebar-label font-medium">World Clock</span>
@@ -130,7 +126,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                         <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
                     </div>
                     <div class="user-info flex-1 min-w-0 ml-3 transition-opacity duration-300">
-                        <p class="text-sm font-bold font-heading truncate dark:text-white text-slate-800"><?= htmlspecialchars($_SESSION['username']) ?></p>
+                        <p class="text-sm font-bold font-heading truncate text-white"><?= htmlspecialchars($_SESSION['username']) ?></p>
                         <div class="flex items-center gap-1 text-xs opacity-70">
                             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Online
                         </div>
@@ -143,17 +139,18 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
             <!-- Header -->
             <header class="h-20 flex items-center justify-between px-8 glass-panel z-10 shrink-0 shadow-lg">
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleSidebar()" class="p-2.5 rounded-xl hover:bg-white/10 transition-colors dark:text-white text-slate-800">
+                    <button onclick="toggleSidebar()" class="p-2.5 rounded-xl hover:bg-white/10 transition-colors text-white">
                         <i data-lucide="menu" class="w-6 h-6"></i>
                     </button>
-                    <h2 id="page-title" class="text-2xl font-heading font-extrabold tracking-tight drop-shadow-sm hidden md:block dark:text-white text-slate-800">DASHBOARD</h2>
+                    <h2 id="page-title" class="text-2xl font-heading font-extrabold tracking-tight drop-shadow-sm hidden md:block text-white">DASHBOARD</h2>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleTheme()" class="p-3 rounded-full hover:bg-white/20 transition-all active:scale-95 bg-white/5 border border-white/10 shadow-sm group dark:text-white text-slate-800">
-                        <i id="icon-sun" data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-300 group-hover:rotate-45 transition-transform"></i>
-                        <i id="icon-moon" data-lucide="moon" class="w-5 h-5 block dark:hidden text-indigo-600 group-hover:-rotate-12 transition-transform"></i>
-                    </button>
+                    <!-- GITHUB BUTTON -->
+                    <a href="https://github.com/FaidRama/3-matkul" target="_blank" class="p-3 rounded-full hover:bg-white/20 transition-all active:scale-95 bg-white/5 border border-white/10 shadow-sm group text-white" title="View Source on GitHub">
+                        <i data-lucide="github" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+                    </a>
+                    
                     <a href="?logout=true" class="bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white border border-white/20 px-6 py-2.5 rounded-full text-xs font-bold transition-all shadow-lg hover:shadow-red-500/30 flex items-center gap-2 font-heading tracking-wider active:scale-95">
                         <i data-lucide="log-out" class="w-3 h-3"></i> <span class="hidden sm:inline">LOGOUT</span>
                     </a>

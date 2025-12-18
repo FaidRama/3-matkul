@@ -1,40 +1,31 @@
 lucide.createIcons();
 
-// --- THEME & BACKGROUND LOGIC ---
+// --- DYNAMIC BACKGROUND LOGIC ---
 const bgEl = document.getElementById('main-bg');
 
+// Fixed Dark Themes
 const themes = {
-    'dashboard': { dark: 'linear-gradient(135deg, #1e3a8a 0%, #000000 100%)', light: 'linear-gradient(135deg, #dbeafe 0%, #FFFFFF 100%)' },
-    'docx': { dark: 'linear-gradient(135deg, #451a03 0%, #000000 100%)', light: 'linear-gradient(135deg, #FEF3C7 0%, #FFFFFF 100%)' },
-    'image': { dark: 'linear-gradient(135deg, #064E3B 0%, #000000 100%)', light: 'linear-gradient(135deg, #D1FAE5 0%, #FFFFFF 100%)' },
-    'qr': { dark: 'linear-gradient(135deg, #0C4A6E 0%, #000000 100%)', light: 'linear-gradient(135deg, #E0F2FE 0%, #FFFFFF 100%)' },
-    'media': { dark: 'linear-gradient(135deg, #881337 0%, #000000 100%)', light: 'linear-gradient(135deg, #FFE4E6 0%, #FFFFFF 100%)' },
-    'bmi': { dark: 'linear-gradient(135deg, #7C2D12 0%, #000000 100%)', light: 'linear-gradient(135deg, #FFEDD5 0%, #FFFFFF 100%)' },
-    'unit': { dark: 'linear-gradient(135deg, #083344 0%, #000000 100%)', light: 'linear-gradient(135deg, #CFFAFE 0%, #FFFFFF 100%)' }, 
-    'number': { dark: 'linear-gradient(135deg, #2e1065 0%, #000000 100%)', light: 'linear-gradient(135deg, #ede9fe 0%, #FFFFFF 100%)' },
-    'markdown': { dark: 'linear-gradient(135deg, #701a75 0%, #000000 100%)', light: 'linear-gradient(135deg, #fae8ff 0%, #FFFFFF 100%)' },
-    'speed': { dark: 'linear-gradient(135deg, #312e81 0%, #000000 100%)', light: 'linear-gradient(135deg, #e0e7ff 0%, #FFFFFF 100%)' },
-    'worldclock': { dark: 'linear-gradient(135deg, #115e59 0%, #000000 100%)', light: 'linear-gradient(135deg, #ccfbf1 0%, #FFFFFF 100%)' } // Teal
+    'dashboard': 'linear-gradient(135deg, #1e3a8a 0%, #000000 100%)', // Blue 900
+    'docx': 'linear-gradient(135deg, #451a03 0%, #000000 100%)',      // Amber
+    'image': 'linear-gradient(135deg, #064E3B 0%, #000000 100%)',     // Emerald
+    'qr': 'linear-gradient(135deg, #0C4A6E 0%, #000000 100%)',        // Sky
+    'media': 'linear-gradient(135deg, #881337 0%, #000000 100%)',     // Rose
+    'bmi': 'linear-gradient(135deg, #7C2D12 0%, #000000 100%)',       // Orange
+    'unit': 'linear-gradient(135deg, #083344 0%, #000000 100%)',      // Cyan
+    'number': 'linear-gradient(135deg, #2e1065 0%, #000000 100%)',    // Violet
+    'markdown': 'linear-gradient(135deg, #701a75 0%, #000000 100%)',  // Fuchsia
+    'speed': 'linear-gradient(135deg, #312e81 0%, #000000 100%)',     // Indigo
+    'worldclock': 'linear-gradient(135deg, #115e59 0%, #000000 100%)' // Teal
 };
 
 let currentTab = 'dashboard';
 
-if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    document.documentElement.classList.add('dark');
-} else {
-    document.documentElement.classList.remove('dark');
-}
+// Enforce Dark Background Initial
 updateBackground();
 
-function toggleTheme() {
-    document.documentElement.classList.toggle('dark');
-    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-    updateBackground();
-}
-
 function updateBackground() {
-    const isDark = document.documentElement.classList.contains('dark');
-    const gradient = isDark ? themes[currentTab].dark : themes[currentTab].light;
+    // Always use the theme defined, no light/dark check needed
+    const gradient = themes[currentTab] || themes['dashboard'];
     bgEl.style.background = gradient;
 }
 
@@ -119,14 +110,14 @@ document.getElementById('formBmi').onsubmit = async (e) => {
         const d = await r.json(); 
         if(d.error) throw d.error; 
         res.innerHTML = `
-        <div class="bg-white/50 dark:bg-white/10 border border-slate-200 dark:border-white/20 rounded-2xl p-8 text-center shadow-2xl backdrop-blur-xl animate-fade-in-up">
-            <span class="text-sm uppercase tracking-widest opacity-60 mb-2 block dark:text-white text-slate-600">Your BMI Score</span>
-            <h4 class="text-6xl font-bold mb-2 font-heading tracking-tighter dark:text-white text-slate-800">${d.bmi}</h4>
-            <div class="inline-block px-4 py-1 rounded-full bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 mb-6">
+        <div class="bg-white/10 border border-white/20 rounded-2xl p-8 text-center shadow-2xl backdrop-blur-xl animate-fade-in-up">
+            <span class="text-sm uppercase tracking-widest opacity-60 mb-2 block text-white">Your BMI Score</span>
+            <h4 class="text-6xl font-bold mb-2 font-heading tracking-tighter text-white">${d.bmi}</h4>
+            <div class="inline-block px-4 py-1 rounded-full bg-white/10 border border-white/10 mb-6">
                 <p class="font-bold text-lg ${d.color}">${d.category}</p>
             </div>
-            <div class="bg-slate-100 dark:bg-black/20 rounded-xl p-4 text-sm opacity-90 border border-slate-200 dark:border-white/5 text-left flex gap-3 dark:text-white text-slate-700">
-                <i data-lucide="lightbulb" class="w-5 h-5 shrink-0 text-yellow-500 dark:text-yellow-300 mt-0.5"></i>
+            <div class="bg-black/20 rounded-xl p-4 text-sm opacity-90 border border-white/5 text-left flex gap-3 text-white">
+                <i data-lucide="lightbulb" class="w-5 h-5 shrink-0 text-yellow-300 mt-0.5"></i>
                 <span class="leading-relaxed">${d.message}</span>
             </div>
         </div>`; 
@@ -301,7 +292,6 @@ let selectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // Defa
 
 function initWorldMap() {
     // Simplified timezone map for key countries
-    // In a real app, you'd use a more comprehensive library like moment-timezone or a geo-timezone API
     const countryTimezones = {
         'US': 'America/New_York', 'GB': 'Europe/London', 'CN': 'Asia/Shanghai', 
         'JP': 'Asia/Tokyo', 'AU': 'Australia/Sydney', 'IN': 'Asia/Kolkata', 

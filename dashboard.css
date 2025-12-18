@@ -24,8 +24,8 @@
 /* --- LIQUID GLASS iOS 26 EFFECT --- */
 .glass-panel {
     background: rgba(255, 255, 255, 0.002);
-    -webkit-backdrop-filter: blur(2px) saturate(105%);
     backdrop-filter: blur(2px) saturate(105%);
+    -webkit-backdrop-filter: blur(2px) saturate(105%);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     border-left: 1px solid rgba(255, 255, 255, 0.15);
@@ -41,13 +41,6 @@
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.01);
 }
 
-html:not(.dark) .glass-panel {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 20px 40px rgba(31, 38, 135, 0.02), inset 0 0 20px rgba(255, 255, 255, 0.05);
-    color: #1e293b;
-}
-
 /* Inputs */
 .glass-input, .glass-select, .glass-textarea { 
     width: 100%; padding: 0.85rem 1.2rem; border-radius: 16px; 
@@ -58,11 +51,6 @@ html:not(.dark) .glass-panel {
     background: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.05); color: white; 
 }
 .dark .glass-input:focus, .dark .glass-select:focus, .dark .glass-textarea:focus { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.2); box-shadow: 0 0 15px rgba(255,255,255,0.02); }
-
-html:not(.dark) .glass-input, html:not(.dark) .glass-select, html:not(.dark) .glass-textarea { 
-    background: rgba(255,255,255,0.15); border: 1px solid rgba(0,0,0,0.05); color: #333; 
-}
-html:not(.dark) .glass-input:focus, html:not(.dark) .glass-select:focus, html:not(.dark) .glass-textarea:focus { border-color: #6366f1; background: rgba(255,255,255,0.4); box-shadow: 0 0 15px rgba(99, 102, 241, 0.05); }
 
 .dark option { background-color: #1e293b; color: white; }
 
@@ -75,7 +63,6 @@ h1, h2, h3, h4, .font-heading { font-family: 'Plus Jakarta Sans', sans-serif; }
     border-right: 3px solid white; 
     border-radius: 12px;
 }
-html:not(.dark) .nav-item.active { background: rgba(0, 0, 0, 0.02); border-color: #333; }
 
 @media (min-width: 1024px) {
     #sidebar.collapsed { width: 5.5rem; }
@@ -89,20 +76,6 @@ html:not(.dark) .nav-item.active { background: rgba(0, 0, 0, 0.02); border-color
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.2); border-radius: 20px; }
-
-/* Markdown Styles */
-.markdown-preview h1 { font-size: 2em; font-weight: bold; margin-bottom: 0.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.2em; }
-.markdown-preview h2 { font-size: 1.5em; font-weight: bold; margin-bottom: 0.5em; }
-.markdown-preview h3 { font-size: 1.25em; font-weight: bold; margin-bottom: 0.5em; }
-.markdown-preview p { margin-bottom: 1em; line-height: 1.6; }
-.markdown-preview ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
-.markdown-preview ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
-.markdown-preview code { background: rgba(125,125,125,0.2); padding: 0.2em 0.4em; border-radius: 4px; font-family: monospace; }
-.markdown-preview pre { background: rgba(0,0,0,0.3); padding: 1em; border-radius: 8px; overflow-x: auto; margin-bottom: 1em; }
-.markdown-preview blockquote { border-left: 4px solid rgba(255,255,255,0.2); padding-left: 1em; font-style: italic; margin-bottom: 1em; opacity: 0.8; }
-.markdown-preview strong { font-weight: bold; color: inherit; }
-.markdown-preview em { font-style: italic; }
-.markdown-preview hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0; }
 
 /* Map Styles */
 .jvm-zoom-btn { background-color: #3b82f6 !important; padding: 2px; border-radius: 4px; color: white; }
@@ -132,7 +105,20 @@ html:not(.dark) .nav-item.active { background: rgba(0, 0, 0, 0.02); border-color
     white-space: nowrap;
 }
 
-/* Animations */
+/* Markdown Styles */
+.markdown-preview h1 { font-size: 2em; font-weight: bold; margin-bottom: 0.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.2em; }
+.markdown-preview h2 { font-size: 1.5em; font-weight: bold; margin-bottom: 0.5em; }
+.markdown-preview h3 { font-size: 1.25em; font-weight: bold; margin-bottom: 0.5em; }
+.markdown-preview p { margin-bottom: 1em; line-height: 1.6; }
+.markdown-preview ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 1em; }
+.markdown-preview ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; }
+.markdown-preview code { background: rgba(125,125,125,0.2); padding: 0.2em 0.4em; border-radius: 4px; font-family: monospace; }
+.markdown-preview pre { background: rgba(0,0,0,0.3); padding: 1em; border-radius: 8px; overflow-x: auto; margin-bottom: 1em; }
+.markdown-preview blockquote { border-left: 4px solid rgba(255,255,255,0.2); padding-left: 1em; font-style: italic; margin-bottom: 1em; opacity: 0.8; }
+.markdown-preview strong { font-weight: bold; color: inherit; }
+.markdown-preview em { font-style: italic; }
+.markdown-preview hr { border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2em 0; }
+
 @keyframes fade-in-up {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
