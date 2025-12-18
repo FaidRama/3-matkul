@@ -119,13 +119,14 @@ if (isset($_GET['endpoint'])) {
         sendJson(['downloadUrl'=>'download.php?id='.$stmt->insert_id, 'originalSize'=>$f['size'], 'compressedSize'=>strlen($compRaw), 'fileName'=>'compressed.jpg']);
     }
 
-    // 4. DOCX
+    // 4. DOCX Converter
     if ($ep == '/doc/convert' && $method == 'POST') {
         if(!isset($_FILES['file'])) sendJson(['error'=>'File missing'], 400);
         $f = $_FILES['file'];
 
+        // Validasi MIME Type
         $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($f('tmp_name'));
+        $mime = $finfo->file($f['tmp_name']);
         $allowed_mimes = [
             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             'application/zip'
@@ -133,36 +134,96 @@ if (isset($_GET['endpoint'])) {
         if (!in_array($mime, $allowed_mimes)) {
             sendJson(['error'=>'File palsu! terdeteksi: ' . $mime], 400);
         }
+        
         $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
-
         if ($ext != 'docx') sendJson(['error'=>'Format harus Docx'], 400);
 
+        // Setup Folder
         $base = 'uploads/'; 
-        $dirDoc=$base.'docx/'; $dirPdf=$base.'pdf/'; $dirTmp=$base.'temp/';
-        if(!is_dir($dirDoc)) mkdir($dirDoc,0777,true); if(!is_dir($dirPdf)) mkdir($dirPdf,0777,true); if(!is_dir($dirTmp)) mkdir($dirTmp,0777,true);
+        $dirDoc = $base.'docx/'; 
+        $dirPdf = $base.'pdf/'; 
+        $dirTmp = $base.'temp/';
+        
+        // Buat folder jika belum ada
+        if(!is_dir($dirDoc)) mkdir($dirDoc, 0777, true); 
+        if(!is_dir($dirPdf)) mkdir($dirPdf, 0777, true); 
+        if(!is_dir($dirTmp)) mkdir($dirTmp, 0777, true);
 
+        // Bersihkan nama file
         $cleanName = time().'_'.preg_replace('/[^A-Za-z0-9]/', '_', pathinfo($f['name'], PATHINFO_FILENAME));
-        $tmpDoc = $dirTmp.$cleanName.'.docx';
-        move_uploaded_file($f['tmp_name'], $tmpDoc);
+        $tmpDoc = $dirTmp . $cleanName . '.docx';
         
-        // Convert
-        $loPath = __DIR__ . '/external_bin/LibreOffice/program/soffice.exe'; 
-        shell_exec("$loPath --headless --convert-to pdf --outdir \"".realpath($dirTmp)."\" \"".realpath($tmpDoc)."\"");
+        // Pindahkan file upload ke temp
+        if (!move_uploaded_file($f['tmp_name'], $tmpDoc)) {
+            sendJson(['error'=>'Gagal memindahkan file upload'], 500);
+        }
         
-        $tmpPdf = $dirTmp.$cleanName.'.pdf';
-        if(!file_exists($tmpPdf)) sendJson(['error'=>'Failed to convert (LibreOffice)'], 500);
+        // --- [BAGIAN KRUSIAL: PATH LIBREOFFICE] ---
+        
+        // 1. Deteksi Path Absolute soffice.exe
+        // Menggunakan realpath() untuk mengubah / menjadi \ (Windows style)
+        $loPathRaw = __DIR__ . '/external_bin/LibreOffice/program/soffice.exe';
+        $loPath = realpath($loPathRaw);
 
-        // Enkripsi
-        $pathDoc = $dirDoc.$cleanName.'.docx'; $ivDoc = enkripsiDanSimpan($tmpDoc, $pathDoc, $key, $algo);
-        $pathPdf = $dirPdf.$cleanName.'.pdf';  $ivPdf = enkripsiDanSimpan($tmpPdf, $pathPdf, $key, $algo);
-        
-        $uid=$_SESSION['user_id'];
-        $stmt=$conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?, ?)");
-        $t='docx'; $n=$cleanName.'.docx'; $stmt->bind_param("issss",$uid,$n,$t,$pathDoc,$ivDoc); $stmt->execute();
-        $t='pdf'; $n=$cleanName.'.pdf'; $stmt->bind_param("issss",$uid,$n,$t,$pathPdf,$ivPdf); $stmt->execute();
-        $lastId=$stmt->insert_id;
+        // Cek apakah LibreOffice beneran ada di situ?
+        if (!$loPath || !file_exists($loPath)) {
+            @unlink($tmpDoc); // Hapus file sampah
+            sendJson(['error'=>'LibreOffice tidak ditemukan di: ' . $loPathRaw], 500);
+        }
 
-        @unlink($tmpDoc); @unlink($tmpPdf);
+        // 2. Siapkan Path Output & Input (Absolute Path)
+        $outDirAbs = realpath($dirTmp);
+        $inDocAbs  = realpath($tmpDoc);
+
+        // 3. Susun Command dengan TANDA KUTIP (Wajib di Windows)
+        // Format: "PathToExe" --headless --convert-to pdf --outdir "PathOutput" "PathInput"
+        // Tambahkan 2>&1 untuk menangkap pesan error jika gagal
+        $cmd = "\"$loPath\" --headless --convert-to pdf --outdir \"$outDirAbs\" \"$inDocAbs\" 2>&1";
+        
+        // 4. Eksekusi menggunakan exec() untuk menangkap output array
+        $output = [];
+        $returnVar = 0;
+        exec($cmd, $output, $returnVar);
+
+        // 5. Cek Hasil Konversi
+        $tmpPdf = $dirTmp . $cleanName . '.pdf';
+        
+        if (!file_exists($tmpPdf)) {
+            @unlink($tmpDoc);
+            // Tampilkan error asli dari CMD ke JSON response biar tau salahnya dimana
+            sendJson(['error'=>'Gagal konversi LibreOffice. Debug: ' . implode(" ", $output)], 500);
+        }
+
+        // --- [ENKRIPSI & PENYIMPANAN] ---
+        
+        // Enkripsi DOCX Asli
+        $pathDoc = $dirDoc . $cleanName . '.docx'; 
+        $ivDoc = enkripsiDanSimpan($tmpDoc, $pathDoc, $key, $algo);
+        
+        // Enkripsi PDF Hasil
+        $pathPdf = $dirPdf . $cleanName . '.pdf';  
+        $ivPdf = enkripsiDanSimpan($tmpPdf, $pathPdf, $key, $algo);
+        
+        // Simpan ke Database (User mendapat 2 file: DOCX asli & PDF hasil)
+        $uid = $_SESSION['user_id'];
+        $stmt = $conn->prepare("INSERT INTO file_storage (user_id, filename, file_type, file_path, iv_file) VALUES (?, ?, ?, ?, ?)");
+        
+        // Simpan Record DOCX
+        $t='docx'; $n=$cleanName.'.docx'; 
+        $stmt->bind_param("issss", $uid, $n, $t, $pathDoc, $ivDoc); 
+        $stmt->execute();
+        
+        // Simpan Record PDF
+        $t='pdf'; $n=$cleanName.'.pdf'; 
+        $stmt->bind_param("issss", $uid, $n, $t, $pathPdf, $ivPdf); 
+        $stmt->execute();
+        
+        $lastId = $stmt->insert_id; // ID milik PDF (karena terakhir dieksekusi)
+
+        // Bersihkan File Temp (PENTING!)
+        @unlink($tmpDoc); 
+        @unlink($tmpPdf);
+        
         logToDB('DOCX', $f['name'], 'Converted');
         sendJson(['downloadUrl'=>'download.php?id='.$lastId, 'fileName'=>$cleanName.'.pdf']);
     }
