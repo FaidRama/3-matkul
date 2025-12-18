@@ -8,24 +8,25 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - utility𝕏press</title>
     
-    <!-- Dependencies -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap/dist/css/jsvectormap.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/js/jsvectormap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsvectormap/dist/maps/world.js"></script>
+    <link rel="stylesheet" href="assets/css/jsvectormap.css" />
+    <link rel="stylesheet" href="dashboard.css">
 
-    <!-- Tailwind Config -->
+    <script src="assets/js/tailwindcss.js"></script>
+    <script src="assets/js/lucide.js"></script>
+    <script src="assets/js/particles.js"></script>
+    <script src="assets/js/marked.js"></script>
+    <script src="assets/js/jsvectormap.min.js"></script>
+    <script src="assets/js/world.js"></script>
+
     <script>
         tailwind.config = {
-            darkMode: 'class', // We keep this but will always force 'dark' class
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        'heading': ['"Plus Jakarta Sans"', 'sans-serif'],
-                        'body': ['Inter', 'sans-serif'],
+                        // Fallback ke sistem font standar jika offline
+                        'heading': ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        'body': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                     },
                     transitionProperty: {
                         'bg': 'background, background-color, background-image',
@@ -35,13 +36,9 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
         }
     </script>
     
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Custom Styles -->
-    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body class="overflow-hidden text-white bg-[#0A0F1F] transition-colors duration-500">
 
