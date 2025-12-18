@@ -1,5 +1,9 @@
 <?php
     session_start();
+    //keamanan 4A: generate CSRF token
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
     $host = "localhost"; $user = "root"; $pass = ""; $db = "db_alat_online";
     $conn = new mysqli($host, $user, $pass, $db);
 
@@ -11,6 +15,10 @@
     $message = "";
 
     if($_SERVER["REQUEST_METHOD"] == "POST") {
+        //keamanan 4B: cek token
+        if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+            die("Security Warning: CSRF token Invalid!!!");
+        }
         $u = $_POST["username"];
         $p = $_POST["password"];
         $action = $_POST["action"];
@@ -35,12 +43,15 @@
 
             if($row = $result->fetch_assoc()) {
                 if(password_verify($p, $row['password'])) {
+                    // kemanan 3: regenerasi ID sesi untuk cegah session fixation
+                    session_regenerate_id(true);
                     $_SESSION['user_id'] = $row['id'];
                     $_SESSION['username'] = $u;
                     header("Location: index.php");
                     exit;
                 }
             }
+            sleep(2); //cegah bruteforce
             $message = "Invalid Username or Password!";
         }
     }
@@ -134,7 +145,7 @@
             <p class="msg"><?= $message ?></p>
 
             <form method="POST" id="loginForm">
-                <input type="hidden" name="action" value="login">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>"> <input type="hidden" name="action" value="login">
                 <h3>Login</h3>
                 <input type="text" name="username" placeholder="Username" required>
                 <input type="password" name="password" placeholder="Password" required>
@@ -143,7 +154,7 @@
             </form>
 
             <form method="POST" id="registerForm" class="hidden">
-                <input type="hidden" name="action" value="register">
+                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>"> <input type="hidden" name="action" value="register">
                 <h3>Create Account</h3>
                 <input type="text" name="username" placeholder="New Username" required>
                 <input type="password" name="password" placeholder="New Password" required>

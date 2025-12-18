@@ -3,8 +3,9 @@ session_start();
 // ==========================================
 // 1. CONFIG & DEBUGGING
 // ==========================================
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+ini_set('log_errors', 1);
 error_reporting(E_ALL);
 
 define('INDEX_LOADED', true);
@@ -141,6 +142,19 @@ if (isset($_GET['endpoint'])) {
     if ($ep == '/media/convert' && $method == 'POST') {
         if(!isset($_FILES['file'])) sendJson(['error'=>'MP4 file not found'], 400);
         $f = $_FILES['file'];
+
+        //kamanan 2: validasi MINE Type (isi dalam file)
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($f['tmp_name']);
+
+        $allowed_mimes = [
+            'video/mp4',
+            'video/x-matroska', //MKV
+            'application/octet-stream' //MKV kadang terdeteksi gini
+        ];
+        if (!in_array($mime, $allowed_mimes)) {
+            sendJson(['error'=>'file palsu!!!! terdeteksi: ' . $mime], 400);
+        }
         $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
 
         if ($ext != 'mp4' && $ext != 'mkv') sendJson(['error'=>'Format must be MP4 or MKV'], 400);
