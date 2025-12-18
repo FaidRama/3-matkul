@@ -171,7 +171,7 @@
             <div class="overlay" style="display:block; background: rgba(0,0,0,0.4);"></div> 
                 
             <div class="right-box-content">
-                <h1>Login System</h1>
+                <h1>utilityXpress</h1>
                 <p>Access features by logging in or creating a new account</p>
             </div>
         </div>
