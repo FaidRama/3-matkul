@@ -29,7 +29,8 @@ function logToDB($tool, $input, $output) {
 }
 function enkripsiDanSimpan($source, $dest, $kunci, $metode) {
     $data = file_get_contents($source);
-    $ivLen = openssl_cipher_iv_length($metode); $iv = openssl_random_pseudo_bytes($ivLen);
+    $ivLen = openssl_cipher_iv_length($metode); 
+    $iv = openssl_random_pseudo_bytes($ivLen);
     $enc = openssl_encrypt($data, $metode, $kunci, 0, $iv);
     if(file_put_contents($dest, $enc)) return bin2hex($iv);
     return false;
@@ -81,6 +82,20 @@ if (isset($_GET['endpoint'])) {
     if ($ep == '/image/compress' && $method == 'POST') {
         if(!isset($_FILES['file'])) sendJson(['error'=>'File missing'], 400);
         $f = $_FILES['file'];
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($f['tmp_name']);
+
+        $allowed_mimes = [
+            'image/jpeg', // untuk file .jpg, .jpeg
+            'image/png'   // untuk file .png
+        ];
+
+        // Jika file bukan gambar JPG/PNG asli, tolak!
+        if (!in_array($mime, $allowed_mimes)) {
+             sendJson(['error'=>'File palsu! Terdeteksi: ' . $mime . '. Hanya menerima JPG/PNG.'], 400);
+        }
+
         $ext = pathinfo($f['name'], PATHINFO_EXTENSION);
         $src = null;
         if(preg_match('/jpg|jpeg/i', $ext)) $src = @imagecreatefromjpeg($f['tmp_name']);
@@ -108,6 +123,20 @@ if (isset($_GET['endpoint'])) {
     if ($ep == '/doc/convert' && $method == 'POST') {
         if(!isset($_FILES['file'])) sendJson(['error'=>'File missing'], 400);
         $f = $_FILES['file'];
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($f('tmp_name'));
+        $allowed_mimes = [
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'application/zip'
+        ];
+        if (!in_array($mime, $allowed_mimes)) {
+            sendJson(['error'=>'File palsu! terdeteksi: ' . $mime], 400);
+        }
+        $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
+
+        if ($ext != 'docx') sendJson(['error'=>'Format harus Docx'], 400);
+
         $base = 'uploads/'; 
         $dirDoc=$base.'docx/'; $dirPdf=$base.'pdf/'; $dirTmp=$base.'temp/';
         if(!is_dir($dirDoc)) mkdir($dirDoc,0777,true); if(!is_dir($dirPdf)) mkdir($dirPdf,0777,true); if(!is_dir($dirTmp)) mkdir($dirTmp,0777,true);
