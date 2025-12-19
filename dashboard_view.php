@@ -113,7 +113,7 @@ if(!defined('INDEX_LOADED')) { die("Direct access denied! Open index.php instead
                 </button>
                 <button onclick="switchTab('worldclock')" id="nav-worldclock" class="nav-item w-full flex items-center px-4 py-3.5 rounded-xl transition-all hover:bg-white/10 text-left text-sm group">
                     <div class="shrink-0"><i data-lucide="globe" class="w-5 h-5"></i></div>
-                    <span class="sidebar-label font-medium">World Clock</span>
+                    <span class="sidebar-label font-medium">World Clock (Maintenance)</span>
                 </button>
             </nav>
 
